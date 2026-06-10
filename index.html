@@ -397,11 +397,10 @@ body {
   overflow: hidden !important;
 }
 #mobileRoot {
-  aspect-ratio: 393/852;
-  height: min(852px, 96vh);
-  width: calc(min(852px, 96vh) * 393 / 852);
-  border-radius: 54px;
-  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 6px #2a2a2a, 0 40px 120px rgba(0,0,0,.7);
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -455,7 +454,17 @@ body {
 #mobileRoot .patch-card { width: calc(100% - 32px) !important; }
 #mobileRoot .product-modal-card { width: calc(100% - 32px) !important; }
 #mobileRoot .toast { top: 12px; }
-#mobileRoot .verify-backdrop { border-radius: 54px; }
+#mobileRoot .verify-backdrop { border-radius: 0; }
+
+/* ── Performance mode: kill heavy background animations ── */
+body::before, body::after { display: none !important; }
+body { background: var(--bg) !important; }
+.login-corner-glow { animation: none !important; transition: none !important; }
+.login-orb { animation: none !important; }
+.login-word { animation: none !important; }
+.login-brand-bg { animation: none !important; }
+.login-screen::before { animation: none !important; filter: none !important; }
+.login-screen::after { animation: none !important; }
 #mobileRoot .cart-panel { top: 20px; right: 16px; bottom: 80px; width: calc(100% - 32px); max-width: none; }
 /* Mobile bottom nav */
 .mobile-nav {
@@ -5910,7 +5919,7 @@ setInterval(updateMobileNavVisibility, 500);
 
 <script>
 // ── Auto update check ──
-var MOBILE_APP_VERSION = '1.0.1';
+var MOBILE_APP_VERSION = '1.0.2';
 
 function checkMobileUpdate() {
   fetch('https://api.github.com/repos/ReinJanssenBouw/QuantixMobile/releases/latest', {
