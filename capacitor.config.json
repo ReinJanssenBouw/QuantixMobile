@@ -1,0 +1,8 @@
+{
+  "appId": "nl.janssenbouw.quantix",
+  "appName": "Quantix",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
