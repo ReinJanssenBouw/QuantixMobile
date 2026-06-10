@@ -5908,5 +5908,65 @@ setInterval(syncMobileNavBadges, 800);
 setInterval(updateMobileNavVisibility, 500);
 </script>
 
+<script>
+// ── Auto update check ──
+var MOBILE_APP_VERSION = '1.0.1';
+
+function checkMobileUpdate() {
+  fetch('https://api.github.com/repos/ReinJanssenBouw/QuantixMobile/releases/latest', {
+    headers: { 'User-Agent': 'QuantixMobile-App' }
+  })
+  .then(function(r) { return r.ok ? r.json() : null; })
+  .then(function(data) {
+    if (!data || !data.tag_name) return;
+    var latest = data.tag_name.replace(/^v/, '');
+    if (latest !== MOBILE_APP_VERSION) {
+      var apkUrl = '';
+      if (data.assets) {
+        for (var i = 0; i < data.assets.length; i++) {
+          if (data.assets[i].name.endsWith('.apk')) {
+            apkUrl = data.assets[i].browser_download_url;
+            break;
+          }
+        }
+      }
+      showMobileUpdateBanner(latest, apkUrl);
+    }
+  })
+  .catch(function() {});
+}
+
+function showMobileUpdateBanner(version, apkUrl) {
+  if (document.getElementById('mobileUpdateBanner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'mobileUpdateBanner';
+  banner.style.cssText = 'position:fixed;bottom:88px;left:12px;right:12px;z-index:99999;' +
+    'background:linear-gradient(135deg,#2563eb,#7c3aed);' +
+    'border-radius:18px;padding:14px 16px;' +
+    'box-shadow:0 8px 28px rgba(37,99,235,.45);' +
+    'display:flex;align-items:center;justify-content:space-between;gap:12px;' +
+    'animation:toastIn .34s cubic-bezier(.16,1,.3,1) forwards;';
+  banner.innerHTML =
+    '<div style="flex:1;min-width:0">' +
+      '<div style="font-weight:800;color:#fff;font-size:14px;">Update beschikbaar</div>' +
+      '<div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:2px;">Quantix Mobile v' + version + ' is klaar</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;flex-shrink:0">' +
+      (apkUrl
+        ? '<a href="' + apkUrl + '" style="height:36px;padding:0 14px;border:none;border-radius:12px;' +
+          'background:#fff;color:#2563eb;font-weight:800;font-size:13px;' +
+          'display:flex;align-items:center;text-decoration:none;white-space:nowrap;cursor:pointer;">Downloaden</a>'
+        : '') +
+      '<button onclick="document.getElementById(\'mobileUpdateBanner\').remove()" style="width:36px;height:36px;border:none;border-radius:12px;' +
+        'background:rgba(255,255,255,.2);color:#fff;font-size:20px;cursor:pointer;line-height:1;' +
+        'display:flex;align-items:center;justify-content:center;">&times;</button>' +
+    '</div>';
+  document.body.appendChild(banner);
+}
+
+// Check na 4 seconden (app laadt eerst)
+setTimeout(checkMobileUpdate, 4000);
+</script>
+
 </body>
 </html>
